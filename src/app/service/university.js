@@ -1,17 +1,33 @@
 const { UniversityModel: University } = require('../schema')
 
 const getUniversities = (req, res) => {
-  const filter = req.query
-  return University.find(filter)
+  const { country, page } = req.query
+  const filter = {}
+  if (country) filter.country = country
+  const options = {
+    limit: 20,
+    skip: (page - 1) * 20,
+  }
+  University.find(filter, {}, options)
     .then((universities) => res.send(universities))
-    .catch((err) => res.status(500).send(err))
+    .catch((err) => res.status(500).json(err))
 }
 
 const getUniversityById = (req, res) => {
   const id = req.params.id
+
   return University.findById(id)
-    .then((university) => res.send(university))
-    .catch((err) => res.status(500).send(err))
+    .then((university) =>
+      university ? res.send(university) : res.status(404).send('Not Found')
+    )
+    .catch((err) => {
+      console.log(err)
+      if (err.name === 'CastError') {
+        const message = `Resource not found. Invalid ID`
+        return res.status(404).send(message)
+      }
+      res.status(500).json(err)
+    })
 }
 
 const createUniversity = (req, res) => {
@@ -23,28 +39,56 @@ const createUniversity = (req, res) => {
   })
     .then((university) => {
       if (university) {
-        return res.send({ error: 'University already exists' })
+        return res.status(400).json({ error: 'Universidade já existe!' })
       }
 
       return University.create(universityData)
-        .then((createdUniversity) => res.send(createdUniversity))
-        .catch((createErr) => res.status(500).send(createErr))
+        .then((createdUniversity) => res.status(201).json(createdUniversity))
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            const message = `Resource not found. Invalid ID`
+            return res.status(404).send(message)
+          }
+          res.status(500).json(err)
+        })
     })
-    .catch((findErr) => res.status(500).send(findErr))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const message = `Resource not found. Invalid ID`
+        return res.status(404).send(message)
+      }
+      res.status(500).json(err)
+    })
 }
 
 const updateUniversity = (req, res) => {
   const id = req.params.id
   const universityData = req.body
   return University.findByIdAndUpdate(id, universityData, { new: true })
-    .then((updatedUniversity) => res.send(updatedUniversity))
-    .catch((err) => res.status(500).send(err))
+    .then((updatedUniversity) =>
+      updatedUniversity ? res.send(updatedUniversity) : res.status(404)
+    )
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const message = `Resource not found. Invalid ID`
+        return res.status(404).send(message)
+      }
+      res.status(500).json(err)
+    })
 }
 const deleteUniversity = (req, res) => {
   const id = req.params.id
   return University.findByIdAndDelete(id)
-    .then((deletedUniversity) => res.send(deletedUniversity))
-    .catch((err) => res.status(500).send(err))
+    .then((deletedUniversity) =>
+      deletedUniversity ? res.send(deletedUniversity) : res.status(404)
+    )
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const message = `Resource not found. Invalid ID`
+        return res.status(404).send(message)
+      }
+      res.status(500).json(err)
+    })
 }
 
 module.exports = {

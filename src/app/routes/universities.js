@@ -8,7 +8,6 @@ router
   .get('/universities/:id', universities.getUniversityById)
   .post('/universities', universities.createUniversity)
   .put('/universities/:id', universities.updateUniversity)
+  .delete('/universities/:id', universities.deleteUniversity)
 
-module.exports = {
-  router,
-}
+module.exports = router

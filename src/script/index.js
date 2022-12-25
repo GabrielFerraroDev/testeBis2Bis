@@ -1,13 +1,13 @@
 require('dotenv').config()
 const axios = require('axios')
-const { universityModel: modelUniversity } = require('../app/schema/')
+const { UniversityModel: modelUniversity } = require('../app/schema/')
 const { createMongoConnection } = require('../app/database')
 const { dtUniversity } = require('../app/data-transformation/university')
 const { sleep } = require('../app/utils')
+createMongoConnection()
 
 const script = async () => {
   try {
-    await createMongoConnection()
     const countries = [
       'argentina',
       'brasil',
