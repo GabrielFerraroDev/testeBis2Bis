@@ -6,7 +6,7 @@
   "scripts": {
     "script": "node src/script",
     "start": "node src/app/api",
-    "test": "jest --env=node"
+    "test": "cross-env NODE_ENV=test jest --env=node"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -20,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "supertest": "^6.3.3"
   }
 }

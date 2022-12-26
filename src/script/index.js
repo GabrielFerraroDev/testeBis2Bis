@@ -48,7 +48,6 @@ const script = async () => {
         console.log(`Andamento ${index}/${chunks.length - 1}`)
 
         const res = await modelUniversity.insertMany(chunk)
-        console.log(res)
       })
     )
     console.log('Finalizado!')
